@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Profile Database Login</title>
+    <script>
+      function doValidate() {
+        console.log("Validating...");
+        var pw = document.getElementById("id_1723").value;
+        var em = document.getElementById("id_email").value;
+
+        if (em == null || em == "" || pw == null || pw == "") {
+          alert("Both fields must be filled out");
+          return false;
+        }
+        return true;
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Login to Profile Database</h1>
+
+    <form method="post" action="login.php" onsubmit="return doValidate();">
+      <label for="id_email">Email:</label>
+      <input type="text" name="email" id="id_email" /><br /><br />
+
+      <label for="id_1723">Password:</label>
+      <input type="password" name="pass" id="id_1723" /><br /><br />
+
+      <input type="submit" value="Log In" />
+    </form>
+
+    <p><a href="add.php">Add Profile (if logged in)</a></p>
+  </body>
+</html>
