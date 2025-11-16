@@ -2,10 +2,9 @@
 session_start();
 require_once "pdo.php";
 
-$error = false;
 $salt = "XyZzy12*_";
 
-if ( isset($_POST['email']) && isset($_POST['pass']) ) {
+if (isset($_POST['email']) && isset($_POST['pass'])) {
     $check = hash('md5', $salt.$_POST['pass']);
     $stmt = $pdo->prepare("SELECT user_id, name FROM users WHERE email=:em AND password=:pw");
     $stmt->execute(array(':em'=>$_POST['email'], ':pw'=>$check));
@@ -24,9 +23,10 @@ if ( isset($_POST['email']) && isset($_POST['pass']) ) {
 }
 ?>
 
+<!DOCTYPE html>
 <html>
 <head>
-<title>bc52c173</title>
+<title>Anas Berrqia - Login</title>
 <script>
 function doValidate() {
     var pw = document.getElementById('id_1723').value;
@@ -54,5 +54,6 @@ Email: <input type="text" name="email" id="id_email"><br><br>
 Password: <input type="password" name="pass" id="id_1723"><br><br>
 <input type="submit" value="Log In">
 </form>
+
 </body>
 </html>
