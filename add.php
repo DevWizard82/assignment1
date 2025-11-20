@@ -12,7 +12,6 @@ if (!isset($_SESSION['user_id'])) {
 if (isset($_POST['first_name']) && isset($_POST['last_name']) &&
     isset($_POST['email']) && isset($_POST['headline']) && isset($_POST['summary'])) {
 
-    // Basic profile validation
     if (strlen($_POST['first_name']) < 1 || strlen($_POST['last_name']) < 1 ||
         strlen($_POST['email']) < 1 || strlen($_POST['headline']) < 1 || strlen($_POST['summary']) < 1) {
         $_SESSION['error'] = "All fields are required";
@@ -28,11 +27,11 @@ if (isset($_POST['first_name']) && isset($_POST['last_name']) &&
 
     // Validate positions
     function validatePos() {
-        for ($i = 1; $i <= 9; $i++) {
+        for ($i=1; $i<=9; $i++) {
             if (!isset($_POST['year'.$i]) || !isset($_POST['desc'.$i])) continue;
             $year = trim($_POST['year'.$i]);
             $desc = trim($_POST['desc'.$i]);
-            if (strlen($year) == 0 || strlen($desc) == 0) return "All fields are required";
+            if (strlen($year)==0 || strlen($desc)==0) return "All fields are required";
             if (!is_numeric($year)) return "Position year must be numeric";
         }
         return true;
@@ -51,23 +50,23 @@ if (isset($_POST['first_name']) && isset($_POST['last_name']) &&
         VALUES (:uid, :fn, :ln, :em, :he, :su)');
     $stmt->execute([
         ':uid' => $_SESSION['user_id'],
-        ':fn'  => $_POST['first_name'],
-        ':ln'  => $_POST['last_name'],
-        ':em'  => $_POST['email'],
-        ':he'  => $_POST['headline'],
-        ':su'  => $_POST['summary']
+        ':fn' => $_POST['first_name'],
+        ':ln' => $_POST['last_name'],
+        ':em' => $_POST['email'],
+        ':he' => $_POST['headline'],
+        ':su' => $_POST['summary']
     ]);
     $profile_id = $pdo->lastInsertId();
 
     // Insert positions
     $rank = 1;
-    for ($i = 1; $i <= 9; $i++) {
+    for ($i=1; $i<=9; $i++) {
         if (!isset($_POST['year'.$i]) || !isset($_POST['desc'.$i])) continue;
         $stmt = $pdo->prepare('INSERT INTO Position
             (profile_id, rank, year, description)
             VALUES (:pid, :rank, :year, :desc)');
         $stmt->execute([
-            ':pid'  => $profile_id,
+            ':pid' => $profile_id,
             ':rank' => $rank,
             ':year' => $_POST['year'.$i],
             ':desc' => $_POST['desc'.$i]
@@ -109,15 +108,14 @@ if (isset($_SESSION['error'])) {
 <div id="position_fields"></div>
 
 <p>
-<input type="submit" value="Add">
+<input type="submit" name="add" value="Add">
 <a href="index.php">Cancel</a>
 </p>
 </form>
 
 <script>
 countPos = 0;
-
-$('#addPos').click(function(event) {
+$('#addPos').click(function(event){
     event.preventDefault();
     if (countPos >= 9) {
         alert("Maximum of nine position entries exceeded");
@@ -125,10 +123,10 @@ $('#addPos').click(function(event) {
     }
     countPos++;
     $('#position_fields').append(
-        '<div id="position'+countPos+'"> \
+        '<div id="position'+countPos+'">\
         <p>Year: <input type="text" name="year'+countPos+'"> \
-        <input type="button" value="-" onclick="$(\'#position'+countPos+'\').remove(); return false;"></p> \
-        <textarea name="desc'+countPos+'" rows="8" cols="80"></textarea> \
+        <input type="button" value="-" onclick="$(\'#position'+countPos+'\').remove(); return false;"></p>\
+        <textarea name="desc'+countPos+'" rows="8" cols="80"></textarea>\
         </div>'
     );
 });
