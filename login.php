@@ -52,10 +52,10 @@ if (isset($_SESSION['error'])) {
 <form method="post" action="login.php" onsubmit="return doValidate();">
 Email: <input type="text" name="email" id="id_email"><br><br>
 Password: <input type="password" name="pass" id="id_1723"><br><br>
+<a href="add.php">Add New Entry</a>
 <input type="submit" value="Log In">
 </form>
 
-<a href="add.php">Add New Entry</a>
 
 
 </body>
