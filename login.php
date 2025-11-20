@@ -55,5 +55,8 @@ Password: <input type="password" name="pass" id="id_1723"><br><br>
 <input type="submit" value="Log In">
 </form>
 
+<a href="add.php">Add New Entry</a>
+
+
 </body>
 </html>
