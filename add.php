@@ -22,11 +22,13 @@ if (isset($_POST['first_name']) && isset($_POST['last_name']) &&
 
     // Validate positions
     function validatePos() {
-        for ($i=1; $i<=9; $i++) {
+        for ($i = 1; $i <= 9; $i++) {
             if (! isset($_POST['year'.$i])) continue;
             if (! isset($_POST['desc'.$i])) continue;
+
             $year = trim($_POST['year'.$i]);
             $desc = trim($_POST['desc'.$i]);
+
             if (strlen($year) == 0 || strlen($desc) == 0) return "All fields are required";
             if (! is_numeric($year)) return "Position year must be numeric";
         }
@@ -40,10 +42,10 @@ if (isset($_POST['first_name']) && isset($_POST['last_name']) &&
         return;
     }
 
-    // Insert profile
+    // INSERT PROFILE
     $stmt = $pdo->prepare('INSERT INTO Profile
         (user_id, first_name, last_name, email, headline, summary)
-        VALUES ( :uid, :fn, :ln, :em, :he, :su)');
+        VALUES (:uid, :fn, :ln, :em, :he, :su)');
     $stmt->execute(array(
         ':uid' => $_SESSION['user_id'],
         ':fn' => $_POST['first_name'],
@@ -54,13 +56,11 @@ if (isset($_POST['first_name']) && isset($_POST['last_name']) &&
     ));
     $profile_id = $pdo->lastInsertId();
 
-    // Insert positions (if any)
+    // INSERT POSITIONS
     $rank = 1;
-    for ($i=1; $i<=9; $i++) {
+    for ($i = 1; $i <= 9; $i++) {
         if (! isset($_POST['year'.$i])) continue;
         if (! isset($_POST['desc'.$i])) continue;
-        $year = trim($_POST['year'.$i]);
-        $desc = trim($_POST['desc'.$i]);
 
         $stmt = $pdo->prepare('INSERT INTO Position
             (profile_id, rank, year, description)
@@ -68,8 +68,8 @@ if (isset($_POST['first_name']) && isset($_POST['last_name']) &&
         $stmt->execute(array(
             ':pid' => $profile_id,
             ':rank' => $rank,
-            ':year' => $year,
-            ':desc' => $desc
+            ':year' => $_POST['year'.$i],
+            ':desc' => $_POST['desc'.$i]
         ));
         $rank++;
     }
@@ -79,75 +79,72 @@ if (isset($_POST['first_name']) && isset($_POST['last_name']) &&
     return;
 }
 ?>
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
-  <title>anas berrqia - Add Profile</title>
-  <link rel="stylesheet"
-    href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-  <script
-    src="https://code.jquery.com/jquery-3.2.1.js"></script>
+<title>Anas Berrqia - Add Profile</title>
+<link rel="stylesheet"
+href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
 </head>
-<body class="container">
-  <h1>Adding Profile</h1>
+<body>
+<div class="container">
+<h1>Adding Profile</h1>
 
 <?php
 if (isset($_SESSION['error'])) {
-    echo '<p style="color:red;">'.htmlentities($_SESSION['error'])."</p>\n";
+    echo('<p style="color:red;">'.htmlentities($_SESSION['error'])."</p>\n");
     unset($_SESSION['error']);
-}
-if (isset($_SESSION['success'])) {
-    echo '<p style="color:green;">'.htmlentities($_SESSION['success'])."</p>\n";
-    unset($_SESSION['success']);
 }
 ?>
 
-<form method="post" class="form-horizontal">
-  <div class="form-group">
-    <label>First Name:</label>
-    <input type="text" name="first_name" class="form-control">
-  </div>
-  <div class="form-group">
-    <label>Last Name:</label>
-    <input type="text" name="last_name" class="form-control">
-  </div>
-  <div class="form-group">
-    <label>Email:</label>
-    <input type="text" name="email" class="form-control">
-  </div>
-  <div class="form-group">
-    <label>Headline:</label>
-    <input type="text" name="headline" class="form-control">
-  </div>
-  <div class="form-group">
-    <label>Summary:</label>
-    <textarea name="summary" rows="8" cols="80" class="form-control"></textarea>
-  </div>
+<form method="post">
 
-  <p>Position: <input id="addPos" type="button" class="btn btn-default" value="+"></p>
-  <div id="position_fields"></div>
+<p>First Name:
+<input type="text" name="first_name"></p>
 
-  <input type="submit" value="Add" class="btn btn-primary">
-  <a href="index.php" class="btn btn-default">Cancel</a>
+<p>Last Name:
+<input type="text" name="last_name"></p>
+
+<p>Email:
+<input type="text" name="email"></p>
+
+<p>Headline:<br/>
+<input type="text" name="headline"></p>
+
+<p>Summary:<br/>
+<textarea name="summary" rows="8" cols="80"></textarea></p>
+
+<p>Position: <input type="button" id="addPos" value="+"></p>
+<div id="position_fields"></div>
+
+<p>
+<input type="submit" value="Add">
+<a href="index.php">Cancel</a>
+</p>
+
 </form>
 
 <script>
 countPos = 0;
-// add up to 9
-$('#addPos').click(function(event){
+
+$('#addPos').click(function(event) {
     event.preventDefault();
     if (countPos >= 9) {
         alert("Maximum of nine position entries exceeded");
         return;
     }
     countPos++;
-    var source = '<div id="position'+countPos+'"> \
-      <p>Year: <input type="text" name="year'+countPos+'" /> \
-      <input type="button" value="-" onclick="$(\'#position'+countPos+'\').remove(); return false;"></p> \
-      <textarea name="desc'+countPos+'" rows="8" cols="80"></textarea> \
-    </div>';
-    $('#position_fields').append(source);
+
+    $('#position_fields').append(
+        '<div id="position'+countPos+'"> \
+        <p>Year: <input type="text" name="year'+countPos+'"> \
+        <input type="button" value="-" onclick="$(\'#position'+countPos+'\').remove(); return false;"></p> \
+        <textarea name="desc'+countPos+'" rows="8" cols="80"></textarea> \
+        </div>'
+    );
 });
 </script>
+</div>
 </body>
 </html>
